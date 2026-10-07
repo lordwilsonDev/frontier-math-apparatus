@@ -29,7 +29,7 @@ unless the final attempt has an independent PASS and a match that was not self-c
 
 ```
 bin/fma preflight             # must print READY before any batch
-python3 -m pytest -q          # 16 tests (needs pytest; preflight covers the core loop without it)
+python3 -m pytest -q          # 17 tests (needs pytest; preflight covers the core loop without it)
 bin/fma status --run <id>     # phase and next allowed action
 bin/fma check --run <id>      # ledger + run.json integrity
 bin/fma metrics

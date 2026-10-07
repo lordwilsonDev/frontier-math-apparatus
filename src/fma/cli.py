@@ -87,6 +87,18 @@ NEXT = {"A": "question", "B": "audit", "C": "plan", "D": "attempt", "E": "verify
         "I": "attempt", "T": "transfer | deliver", "K": "(complete)"}
 
 
+def _next(r) -> str:
+    """Next allowed action, stepping over stages this run's condition skips."""
+    skip = set(r.state.get("condition", {}).get("skip", []))
+    steps = [("A", "question", {"question"}), ("B", "audit", {"audit"}), ("C", "plan", {"ail", "moie"})]
+    if r.phase in "ABC":
+        for phase, action, stages in steps:
+            if phase >= r.phase and not stages <= skip:
+                return action
+        return "attempt"
+    return NEXT[r.phase]
+
+
 def _dispatch(a) -> int:
     home = a.home
     if a.cmd == "init":
@@ -105,7 +117,7 @@ def _dispatch(a) -> int:
         r = Run(home, a.run)
         print(json.dumps({"run_id": r.run_id, "phase": r.phase, "status": r.state["status"],
                           "cycle": r.state["cycle"], "attempts": len(r.state["attempts"]),
-                          "reference_released": r.released, "next": NEXT[r.phase],
+                          "reference_released": r.released, "next": _next(r),
                           "skipped_stages": r.state.get("condition", {}).get("skip", []),
                           "arm": r.state.get("arm"),
                           "ledger_head": r.ledger.head()}, indent=2))

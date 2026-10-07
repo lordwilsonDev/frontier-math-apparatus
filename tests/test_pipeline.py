@@ -246,3 +246,14 @@ def test_integer_adapter_calls_distinct_integers_a_mismatch(tmp_path):
     r2 = to_plan(tmp_path, "I2", "F-0001")
     r2.attempt(att("about 2418"), "solver"); r2.verify(PASS, "verifier")
     assert r2.compare("judge", adapter="integer")["classification"] == "UNRESOLVED"
+
+
+def test_status_next_action_respects_skipped_stages(tmp_path, capsys):
+    home = ["--home", str(tmp_path)]
+    base = ["--problem", str(FIX / "problems/F-0001.json"), "--reference", str(FIX / "references/F-0001.json"),
+            "--actor", "intake"]
+    main(home + ["init", "--run", "N1"] + base + ["--skip", "question", "--skip", "audit", "--skip", "ail", "--skip", "moie"])
+    main(home + ["init", "--run", "N2"] + base + ["--skip", "question"])
+    capsys.readouterr()
+    main(home + ["status", "--run", "N1"]); assert json.loads(capsys.readouterr().out)["next"] == "attempt"
+    main(home + ["status", "--run", "N2"]); assert json.loads(capsys.readouterr().out)["next"] == "audit"
