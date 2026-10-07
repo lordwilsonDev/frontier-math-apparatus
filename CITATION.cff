@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this apparatus, please cite it."
+title: "Frontier Math Apparatus"
+version: 0.1.0
+date-released: 2026-10-07
+license: MIT
+authors:
+  - name: "Black Swan Labs"

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Run the apparatus from a checkout without installing it.
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m fma "$@"

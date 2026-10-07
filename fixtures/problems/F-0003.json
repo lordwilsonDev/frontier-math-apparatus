@@ -1,0 +1,8 @@
+{
+  "problem_id": "F-0003",
+  "statement": "Expand (x + 1)^2 as a polynomial in x.",
+  "source": "fixture",
+  "terrain": "T1",
+  "difficulty": "L1",
+  "blind_reference": true
+}

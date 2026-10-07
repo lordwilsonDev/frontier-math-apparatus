@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Transition",
+  "type": "object",
+  "required": [
+    "transition_id",
+    "input_state",
+    "action",
+    "output_state"
+  ],
+  "properties": {
+    "transition_id": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "authority": {
+      "type": "string"
+    },
+    "question_version": {
+      "type": "integer"
+    },
+    "input_state": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "output_state": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "channel": {
+      "type": "string"
+    },
+    "transformation": {
+      "type": "string"
+    },
+    "loss": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "invention": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "hash": {
+      "type": "string"
+    },
+    "previous_hash": {
+      "type": "string"
+    },
+    "state_hash": {
+      "type": "string"
+    },
+    "detail": {
+      "type": "object"
+    }
+  }
+}

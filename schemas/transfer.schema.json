@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Transfer",
+  "type": "object",
+  "required": [
+    "tested",
+    "result"
+  ],
+  "properties": {
+    "tested": {
+      "type": "boolean"
+    },
+    "problem_id": {
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "TRANSFERRED",
+        "DID_NOT_TRANSFER",
+        "INCONCLUSIVE"
+      ]
+    },
+    "evidence": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    }
+  }
+}

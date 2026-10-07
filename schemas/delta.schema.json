@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Delta Analysis",
+  "type": "object",
+  "required": [
+    "locus",
+    "description"
+  ],
+  "properties": {
+    "locus": {
+      "enum": [
+        "interpretation",
+        "assumptions",
+        "strategy",
+        "derivation",
+        "calculation",
+        "scope",
+        "tooling",
+        "evidence",
+        "reference_disagreement"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "type": "string"
+    },
+    "attempt_id": {
+      "type": "string"
+    }
+  }
+}

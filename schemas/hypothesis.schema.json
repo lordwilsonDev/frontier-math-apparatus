@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Hypothesis","type":"object","required":["hypothesis_id","statement","assumptions","discriminating_test"],"properties":{"hypothesis_id":{"type":"string"},"statement":{"type":"string"},"assumptions":{"type":"array","items":{"type":"string"}},"strategy":{"type":"string"},"discriminating_test":{"type":"string"}}}

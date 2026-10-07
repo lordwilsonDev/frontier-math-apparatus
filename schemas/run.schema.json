@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Frontier Math Apparatus Run",
+  "type": "object",
+  "required": [
+    "run_id",
+    "problem",
+    "attempts",
+    "status",
+    "phase"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "problem": {
+      "$ref": "problem.schema.json"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "$ref": "hypothesis.schema.json"
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "$ref": "attempt.schema.json"
+      }
+    },
+    "comparison": {
+      "$ref": "comparison.schema.json"
+    },
+    "intervention": {
+      "$ref": "intervention.schema.json"
+    },
+    "transfer": {
+      "$ref": "transfer.schema.json"
+    },
+    "deliverable": {
+      "$ref": "deliverable.schema.json"
+    },
+    "status": {
+      "enum": [
+        "PROPOSED",
+        "RUNNING",
+        "MATCH",
+        "MISMATCH",
+        "UNRESOLVED",
+        "COMPLETED"
+      ]
+    },
+    "phase": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "T",
+        "K"
+      ]
+    },
+    "cycle": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "reference_commitment": {
+      "type": "string"
+    },
+    "verifications": {
+      "type": "array",
+      "items": {
+        "$ref": "verification.schema.json"
+      }
+    },
+    "comparisons": {
+      "type": "array",
+      "items": {
+        "$ref": "comparison.schema.json"
+      }
+    },
+    "deltas": {
+      "type": "array",
+      "items": {
+        "$ref": "delta.schema.json"
+      }
+    },
+    "interventions": {
+      "type": "array",
+      "items": {
+        "$ref": "intervention.schema.json"
+      }
+    }
+  },
+  "$comment": "question is null until Phase B, then conforms to question.schema.json (validated by the engine)."
+}

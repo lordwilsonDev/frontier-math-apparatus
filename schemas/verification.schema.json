@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Internal Verification",
+  "type": "object",
+  "required": [
+    "attempt_id",
+    "verifier",
+    "independent",
+    "checks",
+    "outcome"
+  ],
+  "properties": {
+    "attempt_id": {
+      "type": "string"
+    },
+    "verifier": {
+      "type": "string"
+    },
+    "independent": {
+      "type": "boolean"
+    },
+    "outcome": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INCONCLUSIVE"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "outcome"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "formal",
+              "semantic",
+              "computational",
+              "adversarial",
+              "evidence",
+              "governance"
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "INCONCLUSIVE"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

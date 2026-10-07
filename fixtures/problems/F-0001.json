@@ -1,0 +1,8 @@
+{
+  "problem_id": "F-0001",
+  "statement": "Find the sum of all positive integers n <= 100 that are divisible by 3 or 5.",
+  "source": "fixture",
+  "terrain": "T1",
+  "difficulty": "L1",
+  "blind_reference": true
+}

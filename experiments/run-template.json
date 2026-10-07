@@ -1,0 +1,23 @@
+{
+  "run_id": "example-0001",
+  "problem": {
+    "problem_id": "P-0001",
+    "statement": "REDACTED/UNKNOWN PROBLEM",
+    "source": "fixture",
+    "terrain": "T1",
+    "difficulty": "L1",
+    "blind_reference": true
+  },
+  "question": {
+    "question_id": "Q-0001",
+    "version": 1,
+    "referent": "",
+    "proposition": "",
+    "scope": "",
+    "assumptions": [],
+    "success_conditions": []
+  },
+  "hypotheses": [],
+  "attempts": [],
+  "status": "PROPOSED"
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reference Comparison",
+  "type": "object",
+  "required": [
+    "classification"
+  ],
+  "properties": {
+    "classification": {
+      "enum": [
+        "EXACT_MATCH",
+        "EQUIVALENT_RESULT",
+        "PARTIAL_MATCH",
+        "DIFFERENT_FORM",
+        "CONDITIONAL_MATCH",
+        "MISMATCH",
+        "UNRESOLVED"
+      ]
+    },
+    "solver_result": {
+      "type": "string"
+    },
+    "reference_result": {
+      "type": "string"
+    },
+    "equivalence_basis": {
+      "type": "string"
+    },
+    "delta": {
+      "type": "string"
+    },
+    "reference_provenance": {
+      "type": "string"
+    },
+    "attempt_id": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string"
+    },
+    "self_certified": {
+      "type": "boolean"
+    }
+  }
+}

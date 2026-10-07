@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deliverable",
+  "type": "object",
+  "required": [
+    "final_result",
+    "epistemic_status",
+    "lesson"
+  ],
+  "properties": {
+    "final_result": {
+      "type": "string"
+    },
+    "epistemic_status": {
+      "enum": [
+        "PROPOSED",
+        "SUPPORTED",
+        "VERIFIED",
+        "REPRODUCED",
+        "REJECTED",
+        "UNRESOLVED"
+      ]
+    },
+    "lesson": {
+      "type": "string",
+      "minLength": 1
+    },
+    "regression_test": {
+      "type": "string"
+    },
+    "lesson_status": {
+      "enum": [
+        "NOT_APPLICABLE",
+        "UNTESTED",
+        "ACCEPTED",
+        "REJECTED",
+        "INCONCLUSIVE"
+      ]
+    }
+  }
+}

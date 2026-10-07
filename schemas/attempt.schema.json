@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Attempt",
+  "type": "object",
+  "required": [
+    "attempt_id",
+    "reference_blind",
+    "candidate_result"
+  ],
+  "properties": {
+    "attempt_id": {
+      "type": "string"
+    },
+    "reference_blind": {
+      "type": "boolean"
+    },
+    "strategy": {
+      "type": "string"
+    },
+    "derivation": {
+      "type": "string"
+    },
+    "intermediate_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "candidate_result": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "cycle": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}
