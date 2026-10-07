@@ -22,6 +22,7 @@ Can a governed research apparatus independently reconstruct mathematical results
 8. A lesson is not accepted as transferable until tested on unseen terrain.
 9. The apparatus cannot be its own final authority.
 10. Every run ends in a durable research deliverable.
+11. Everything is recorded: failures, mistakes, deviations and dead ends, in the run ledger or the program log.
 
 ## Status (v0.2)
 

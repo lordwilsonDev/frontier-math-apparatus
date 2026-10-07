@@ -10,7 +10,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import schema, vault
+from . import programlog, schema, vault
 from .engine import ProtocolError, Run, list_runs
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -106,6 +106,10 @@ def run(home) -> tuple[list[dict], bool]:
         str(v) if outside else "set FMA_VAULT to a directory outside this repo, e.g. export FMA_VAULT=~/.fma-vault")
     bad = [r for r in list_runs(home) if Run(home, r).integrity()]
     add("existing runs intact", not bad, f"{len(list_runs(home))} run(s)" if not bad else f"failed: {bad}")
+
+    bad_log = programlog.verify(home)
+    add("program log intact", not bad_log,
+        f"{len(programlog.entries(home))} entries" if not bad_log else "; ".join(bad_log))
 
     cal = list((home / "calibration" / "problems").glob("*.json"))
     missing = [p.stem for p in cal if not (v / f"{p.stem}.json").exists()]

@@ -47,6 +47,9 @@ Reads: correction gain, attempts-to-correction, `transfer_results`.
   completeness 1.0, zero attempts with contamination risk, self-certification rate 0.
   A batch that fails one of these is rerun on new problems, not patched.
 - Run `bin/fma check` on each run and commit `runs/` after each batch.
+- Every departure from this plan, abandoned run, tool failure or apparatus bug goes in the program
+  log (`bin/fma log`) when it happens. Changing this plan after Batch 1 starts is a `deviation`
+  entry with the reason; the old text stays in git history.
 
 ## After Pilot 0
 

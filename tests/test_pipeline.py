@@ -257,3 +257,17 @@ def test_status_next_action_respects_skipped_stages(tmp_path, capsys):
     capsys.readouterr()
     main(home + ["status", "--run", "N1"]); assert json.loads(capsys.readouterr().out)["next"] == "attempt"
     main(home + ["status", "--run", "N2"]); assert json.loads(capsys.readouterr().out)["next"] == "audit"
+
+
+def test_program_log_is_append_only_and_tamper_evident(tmp_path, capsys):
+    from fma import programlog
+    home = ["--home", str(tmp_path)]
+    assert main(home + ["log", "--kind", "mistake", "--text", "wrong fixture answer", "--actor", "builder"]) == 0
+    assert main(home + ["log", "--kind", "correction", "--text", "fixed", "--actor", "builder", "--ref", "T-0001"]) == 0
+    assert main(home + ["log", "--text", "no kind"]) == 2
+    assert main(home + ["log"]) == 0
+    assert "wrong fixture answer" in capsys.readouterr().out
+    path = tmp_path / "log" / "program.jsonl"
+    path.write_text(path.read_text().replace("wrong fixture answer", "nothing happened"))
+    assert programlog.verify(tmp_path)
+    assert main(home + ["log"]) == 1

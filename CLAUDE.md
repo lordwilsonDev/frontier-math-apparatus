@@ -18,6 +18,7 @@ process around a solver.
 | Stage ablation | `init --skip` | Runs can leave out question, audit, ail, moie; metrics report first-pass accuracy per condition |
 | Solver environment | `engine.attempt` | Model, knowledge cutoff, web access, code execution are required; contamination risk is flagged |
 | Calibration bank | `src/fma/calibration.py` | Seeded problems with brute-force answers written to the vault only |
+| Program research log | `bin/fma log` | Append-only, hash-chained record of mistakes, failures, deviations and decisions outside runs |
 | Preflight | `bin/fma preflight` | End-to-end self-test plus readiness checks; exits non-zero if not ready |
 | Metrics | `src/fma/metrics.py` | Primary, per-condition, per-family, diagnostic, governance |
 | Slash command | `.claude/commands/fma-run.md` | `/fma-run <problem.json> [run-id] [skip...]` drives one full run |
@@ -29,7 +30,7 @@ unless the final attempt has an independent PASS and a match that was not self-c
 
 ```
 bin/fma preflight             # must print READY before any batch
-python3 -m pytest -q          # 17 tests (needs pytest; preflight covers the core loop without it)
+python3 -m pytest -q          # 18 tests (needs pytest; preflight covers the core loop without it)
 bin/fma status --run <id>     # phase and next allowed action
 bin/fma check --run <id>      # ledger + run.json integrity
 bin/fma metrics
@@ -82,6 +83,23 @@ Actor names are self-declared strings. The ledger records who claimed to act, no
 6. **The ledger is not externally anchored.** Committing `runs/` after each batch is the anchor.
 7. Four metrics in `docs/METRICS.md` are not computed; `metrics` lists them under `not_implemented`.
 8. `LICENSE` (MIT) and `CITATION.cff` were filled in from Wilson's stated defaults; he should confirm.
+
+## Everything is recorded
+
+This is a research program. Failures, mistakes, deviations and dead ends are data, and they are
+recorded with the same care as results. Wilson's standing rule: everything is recorded.
+
+- Inside a run, the ledger does it. Record the attempt you got, not the one you wanted.
+- Outside a run, use the program log: `bin/fma log --kind <kind> --text "..." --actor <you>`.
+  Kinds: `mistake`, `failure`, `deviation`, `decision`, `correction`, `observation`.
+  Log it when it happens, not at the end. `bin/fma log` with no arguments shows the log.
+- Log at least: every bug found in the apparatus, every departure from `docs/TEST_PLAN.md`, every
+  run abandoned and why, every instruction you interpreted rather than confirmed, every tool or
+  environment failure, and anything you could not verify.
+- The log is append-only and hash-chained (`log/program.jsonl`). Never edit or delete an entry.
+  A wrong entry is corrected by a new `correction` entry that names it.
+- A fix does not erase the mistake. Log the mistake, then the correction.
+- Commit `log/` with every commit.
 
 ## Conventions
 

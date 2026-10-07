@@ -5,7 +5,7 @@ import os
 import sys
 from pathlib import Path
 
-from . import calibration, metrics, preflight
+from . import calibration, metrics, preflight, programlog
 from .engine import ProtocolError, Run, list_runs
 from .schema import ValidationError
 
@@ -71,6 +71,12 @@ def main(argv=None) -> int:
     p.add_argument("--seed", type=int, required=True)
     p.add_argument("--out", default=None, help="default: <home>/calibration")
     sub.add_parser("preflight", help="readiness check before real runs")
+    p = sub.add_parser("log", help="append to (or show) the program research log: mistakes, failures, deviations, decisions")
+    p.add_argument("--kind", choices=programlog.KINDS)
+    p.add_argument("--text")
+    p.add_argument("--actor")
+    p.add_argument("--run", default="", help="related run id, if any")
+    p.add_argument("--ref", default="", help="related commit, file or entry id, if any")
     sub.add_parser("runs", help="list runs")
     sub.add_parser("metrics", help="compute metrics over all runs")
 
@@ -130,6 +136,21 @@ def _dispatch(a) -> int:
         fams = sorted({x["family"] for x in m})
         print(f"wrote {len(m)} problems across {len(fams)} families ({', '.join(fams)}); "
               f"references sealed in the vault, not printed")
+    elif a.cmd == "log":
+        if a.text:
+            if not (a.kind and a.actor):
+                raise ValueError("log needs --kind and --actor with --text")
+            e = programlog.add(home, a.kind, a.text, a.actor, a.run, a.ref)
+            print(f"logged {e['transition_id']} [{a.kind}]")
+        else:
+            for e in programlog.entries(home):
+                d = e["detail"]
+                tag = " ".join(x for x in (d.get("run"), d.get("ref")) if x)
+                print(f"{e['transition_id']} {e['timestamp'][:16]} {e['action']:<11} {e['actor']}: "
+                      f"{d['text']}{'  [' + tag + ']' if tag else ''}")
+            bad = programlog.verify(home)
+            print("\nlog chain intact" if not bad else "\nLOG CHAIN BROKEN: " + "; ".join(bad))
+            return 1 if bad else 0
     elif a.cmd == "preflight":
         checks, ready = preflight.run(home)
         for c in checks:
