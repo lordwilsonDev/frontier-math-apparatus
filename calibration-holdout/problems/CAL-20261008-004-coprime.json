@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261008-004-coprime",
+  "statement": "How many positive integers n <= 400 satisfy both gcd(n, 210) = 1 and n leaves remainder 3 when divided by 4? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "coprime",
+  "terrain": "T-calibration",
+  "difficulty": "L1",
+  "blind_reference": true
+}

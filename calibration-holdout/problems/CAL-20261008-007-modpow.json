@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261008-007-modpow",
+  "statement": "Find the remainder when 16^141 is divided by 13. Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "modpow",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

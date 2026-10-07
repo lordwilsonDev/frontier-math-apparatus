@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-021-incl_excl",
+  "statement": "Find the sum of all positive integers n <= 800 that are divisible by 15 or 3 or 10. Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "incl_excl",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

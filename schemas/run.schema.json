@@ -95,6 +95,28 @@
       "items": {
         "$ref": "intervention.schema.json"
       }
+    },
+    "transfers": {
+      "type": "array",
+      "items": {
+        "$ref": "transfer.schema.json"
+      }
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "skip": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "question",
+              "audit",
+              "ail",
+              "moie"
+            ]
+          }
+        }
+      }
     }
   },
   "$comment": "question is null until Phase B, then conforms to question.schema.json (validated by the engine)."

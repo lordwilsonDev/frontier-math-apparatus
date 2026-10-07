@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-002-modpow",
+  "statement": "Find the remainder when 21^179 is divided by 13. Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "modpow",
+  "terrain": "T-calibration",
+  "difficulty": "L1",
+  "blind_reference": true
+}

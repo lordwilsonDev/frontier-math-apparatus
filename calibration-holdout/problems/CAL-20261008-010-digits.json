@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261008-010-digits",
+  "statement": "How many integers from 1 to 7740 inclusive have a digit sum divisible by 7? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "digits",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

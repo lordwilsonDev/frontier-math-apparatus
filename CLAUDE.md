@@ -3,7 +3,7 @@
 You are picking up a research apparatus owned by Wilson (Black Swan Labs). Read this file, then
 `README.md` and `docs/PROTOCOL.md`. Design rules 1–10 in the README are binding.
 
-## What exists (v0.1, built 2026-10-07)
+## What exists (v0.2, 2026-10-07)
 
 A working, tested governance core. It does not solve mathematics; it controls and records the
 process around a solver.
@@ -12,45 +12,47 @@ process around a solver.
 |---|---|---|
 | Run state machine, phases A–K | `src/fma/engine.py` | Order of phases; no re-solve without a delta and an intervention |
 | Hash-chained ledger | `src/fma/ledger.py` | Every transition recorded; edits to `run.json` or the ledger are detectable |
-| Reference quarantine | `src/fma/vault.py` | Only a SHA-256 commitment enters the run until Phase G |
-| Comparator + sympy adapter | `src/fma/compare.py`, `src/fma/adapters/` | Non-identical text is `UNRESOLVED`, never auto-`MISMATCH` |
-| Metrics | `src/fma/metrics.py` | Primary, diagnostic, governance numbers from recorded runs |
-| CLI | `bin/fma` | One command per phase |
-| Slash command | `.claude/commands/fma-run.md` | `/fma-run <problem.json> <reference.json>` drives one full run |
+| Reference quarantine | `src/fma/vault.py` | Only a SHA-256 commitment enters the run until Phase G; real problems are refused unless the vault is outside this directory |
+| Comparators | `src/fma/compare.py`, `src/fma/adapters/` | Non-identical text is `UNRESOLVED`; `integer` and `sympy` adapters decide what they can prove |
+| Transfer with a control arm | `engine.transfer` | A lesson only counts as transferred when the treatment run solves the unseen problem and the control run does not |
+| Stage ablation | `init --skip` | Runs can leave out question, audit, ail, moie; metrics report first-pass accuracy per condition |
+| Solver environment | `engine.attempt` | Model, knowledge cutoff, web access, code execution are required; contamination risk is flagged |
+| Calibration bank | `src/fma/calibration.py` | Seeded problems with brute-force answers written to the vault only |
+| Preflight | `bin/fma preflight` | End-to-end self-test plus readiness checks; exits non-zero if not ready |
+| Metrics | `src/fma/metrics.py` | Primary, per-condition, per-family, diagnostic, governance |
+| Slash command | `.claude/commands/fma-run.md` | `/fma-run <problem.json> [run-id] [skip...]` drives one full run |
 
 Facts the engine decides itself (callers cannot assert them): whether an attempt was
 reference-blind, whether a verification was independent, whether a comparison was self-certified,
-and the outcome of a transfer test. `VERIFIED` is refused unless the final attempt has an
-independent PASS and a match that was not self-certified.
+whether an attempt carried the lesson, and the outcome of a transfer test. `VERIFIED` is refused
+unless the final attempt has an independent PASS and a match that was not self-certified.
 
 ```
-python3 -m pytest -q          # 10 tests, all on fixtures
-bin/fma -h
-bin/fma status --run <id>     # shows phase and the next allowed action
+bin/fma preflight             # must print READY before any batch
+python3 -m pytest -q          # 16 tests (needs pytest; preflight covers the core loop without it)
+bin/fma status --run <id>     # phase and next allowed action
 bin/fma check --run <id>      # ledger + run.json integrity
 bin/fma metrics
 ```
 
-No third-party packages are required. `sympy` is optional (equivalence adapter), `pytest` for tests.
+No third-party packages are required. `sympy` is optional, `pytest` is for the test suite.
 
-## Start here: Pilot 0
+## Start here
 
-Do these in order. Stop and ask Wilson where marked.
+The calibration set (30 problems, seed 20261007) is in `calibration/problems/`, with a 20-problem
+transfer holdout (seed 20261008) in `calibration-holdout/problems/`; its answers are in
+the vault at `../.fma-vault`, which `bin/fma` picks up automatically. **Never read the vault.**
 
-1. Run the tests. If they are not green, fix that first.
-2. **Confirm the reference terrain.** The docs name "OpenAI/math". The build session could not
-   reach `github.com/openai/math` from its sandbox (blocked, not confirmed missing). A web search
-   suggested OpenAI published ten mathematical results with Lean proofs in 2026; that was not
-   verified. Find the actual source, its licence, and how results are organised. **Ask Wilson** to
-   confirm it is the corpus he means before ingesting anything.
-3. Write `adapters/openai_math/ingest.py` to the contract in `adapters/openai_math/README.md`.
-   It must emit problem files and reference files separately, with references going straight to
-   the vault.
-4. **Ask Wilson** where the vault lives. Set `FMA_VAULT` to a directory outside this repository
-   that the solving agent is not given. The in-repo default is for fixtures only.
-5. Calibration batch: 5–10 problems Wilson picks at L1–L2, each via `/fma-run`. Purpose is to
-   exercise the protocol and get first metrics, not to claim results.
-6. Review `bin/fma metrics` with Wilson, then fix the highest-value gap below before scaling up.
+1. `bin/fma preflight`. Do not start until it prints READY.
+2. Read `docs/TEST_PLAN.md`. It is fixed in advance; follow it as written.
+3. Ask Wilson which model is the solver for Pilot 0, then run Batch 1: one `/fma-run` per
+   calibration problem. Commit `runs/` when the batch is done.
+4. Show Wilson `bin/fma metrics`. Continue to Batch 2 and 3 only if Batch 1 met the failure
+   count the plan requires.
+5. The external corpus comes after Pilot 0. The docs name "OpenAI/math"; the build session could
+   not reach `github.com/openai/math` (blocked, not confirmed missing), and a web search suggesting
+   OpenAI published ten results with Lean proofs in 2026 was not verified. Confirm the source with
+   Wilson before ingesting anything.
 
 ## Roles for a run
 
@@ -66,24 +68,20 @@ Actor names are self-declared strings. The ledger records who claimed to act, no
 
 ## Known gaps (be honest about these in any write-up)
 
-1. **Blindness is procedural.** Anything that can read the vault directory can read the reference.
-   Also, a public corpus may be in a model's training data or reachable by search. Record the
-   solver model, its knowledge cutoff, and tool access in `attempt.environment`.
-2. **Transfer has no control arm.** A child run matching on first attempt is scored `TRANSFERRED`
-   even if the solver would have solved it without the lesson. Needed: solve the unseen problem
-   with and without the lesson and compare. Until then, transfer rate is an upper bound.
-3. **AIL, MoIE, FCVE are recorded, not implemented.** The engine requires their outputs (inverted
-   assumptions, at least two hypotheses with dissent kept, verification checks) but the reasoning
-   comes from whoever fills them in. Wilson's own implementations should plug in here.
-4. **Comparison is result-string based.** Fine for closed-form answers. For theorem-and-proof
-   references it is the wrong shape; that needs a proof-level comparison design (statement
-   equivalence, proof-strategy delta, Lean check as an FCVE adapter).
-5. **The ledger is not externally anchored.** Commit after each run, or record the head hash
-   somewhere the apparatus cannot write, to satisfy rule 9.
-6. Four metrics in `docs/METRICS.md` are not computed yet; `metrics` lists them under
-   `not_implemented`.
-7. `LICENSE` (MIT) and `CITATION.cff` were filled in from Wilson's stated defaults; he should
-   confirm the wording.
+1. **Blindness is still procedural.** The vault sits outside the repo and the engine refuses an
+   in-repo vault for real problems, but any process on this machine can read it. Solver agents
+   must be told not to, and that instruction is the only barrier.
+2. **Roles and environment are self-declared.** The ledger records the actor names and the
+   solver environment it was given. It cannot verify them.
+3. **AIL, MoIE, FCVE are recorded, not implemented.** The engine requires their outputs; the
+   reasoning comes from whoever fills them in. Batch 2 of the test plan measures whether they help.
+4. **Comparison is result-string based.** Right for the calibration bank. Wrong shape for
+   theorem-and-proof references; that needs statement equivalence and a proof checker adapter.
+5. **One transfer pair is one data point.** The control arm removes the worst confound; it does
+   not make a single pair significant.
+6. **The ledger is not externally anchored.** Committing `runs/` after each batch is the anchor.
+7. Four metrics in `docs/METRICS.md` are not computed; `metrics` lists them under `not_implemented`.
+8. `LICENSE` (MIT) and `CITATION.cff` were filled in from Wilson's stated defaults; he should confirm.
 
 ## Conventions
 
@@ -91,3 +89,4 @@ Actor names are self-declared strings. The ledger records who claimed to act, no
 - A wrong first attempt is data. Do not rerun a blind attempt to get a better number.
 - Commit `runs/` after every completed run.
 - Fixture references sit in the open under `fixtures/references/`; fixtures test plumbing only.
+- To add calibration problems: `bin/fma calibrate --n <N> --seed <new int>`. Wilson runs this, not a solving session.

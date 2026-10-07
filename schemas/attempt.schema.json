@@ -42,7 +42,29 @@
       "type": "string"
     },
     "environment": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "model",
+        "knowledge_cutoff",
+        "web_access",
+        "code_execution"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "knowledge_cutoff": {
+          "type": "string",
+          "minLength": 4
+        },
+        "web_access": {
+          "type": "boolean"
+        },
+        "code_execution": {
+          "type": "boolean"
+        }
+      }
     },
     "actor": {
       "type": "string"
@@ -50,6 +72,15 @@
     "cycle": {
       "type": "integer",
       "minimum": 1
+    },
+    "contamination_risk": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lesson_applied": {
+      "type": "boolean"
     }
   }
 }

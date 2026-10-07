@@ -4,7 +4,9 @@
   "type": "object",
   "required": [
     "tested",
-    "result"
+    "result",
+    "run_id",
+    "control_run_id"
   ],
   "properties": {
     "tested": {
@@ -24,6 +26,9 @@
       "type": "string"
     },
     "run_id": {
+      "type": "string"
+    },
+    "control_run_id": {
       "type": "string"
     }
   }

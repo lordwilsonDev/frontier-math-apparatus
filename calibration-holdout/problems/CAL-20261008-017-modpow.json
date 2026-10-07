@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261008-017-modpow",
+  "statement": "Find the remainder when 10^21 is divided by 7. Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "modpow",
+  "terrain": "T-calibration",
+  "difficulty": "L1",
+  "blind_reference": true
+}

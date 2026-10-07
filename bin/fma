@@ -1,4 +1,9 @@
 #!/bin/sh
 # Run the apparatus from a checkout without installing it.
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Default vault: a sibling directory next to the checkout, if one exists.
+if [ -z "$FMA_VAULT" ] && [ -d "$ROOT/../.fma-vault" ]; then
+  FMA_VAULT="$(cd "$ROOT/../.fma-vault" && pwd)"; export FMA_VAULT
+fi
+FMA_HOME="${FMA_HOME:-$ROOT}"; export FMA_HOME
 PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m fma "$@"

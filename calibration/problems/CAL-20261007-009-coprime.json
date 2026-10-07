@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-009-coprime",
+  "statement": "How many positive integers n <= 520 satisfy both gcd(n, 30) = 1 and n leaves remainder 2 when divided by 5? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "coprime",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

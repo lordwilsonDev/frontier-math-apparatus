@@ -1,1 +1,40 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Problem","type":"object","required":["problem_id","statement","blind_reference"],"properties":{"problem_id":{"type":"string"},"statement":{"type":"string"},"source":{"type":"string"},"terrain":{"type":"string"},"difficulty":{"type":"string"},"blind_reference":{"type":"boolean","const":true},"content_hash":{"type":"string"}}}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Problem",
+  "type": "object",
+  "required": [
+    "problem_id",
+    "statement",
+    "blind_reference"
+  ],
+  "properties": {
+    "problem_id": {
+      "type": "string"
+    },
+    "statement": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "terrain": {
+      "type": "string"
+    },
+    "difficulty": {
+      "type": "string"
+    },
+    "blind_reference": {
+      "type": "boolean",
+      "const": true
+    },
+    "content_hash": {
+      "type": "string"
+    },
+    "family": {
+      "type": "string"
+    },
+    "reference_public_since": {
+      "type": "string"
+    }
+  }
+}

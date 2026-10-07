@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261008-005-digits",
+  "statement": "How many integers from 1 to 424 inclusive have a digit sum divisible by 9? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "digits",
+  "terrain": "T-calibration",
+  "difficulty": "L1",
+  "blind_reference": true
+}

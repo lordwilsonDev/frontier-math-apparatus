@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261008-015-digits",
+  "statement": "How many integers from 1 to 42200 inclusive have a digit sum divisible by 5? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "digits",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-011-incl_excl",
+  "statement": "Find the sum of all positive integers n <= 100 that are divisible by 3 or 4 or 15. Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "incl_excl",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

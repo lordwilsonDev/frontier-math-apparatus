@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-003-lattice",
+  "statement": "A path moves from (0,0) to (5,5) using unit steps right or up. How many such paths avoid the point(s) (1,1)? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "lattice",
+  "terrain": "T-calibration",
+  "difficulty": "L1",
+  "blind_reference": true
+}

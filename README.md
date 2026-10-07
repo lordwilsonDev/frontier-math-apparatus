@@ -23,7 +23,7 @@ Can a governed research apparatus independently reconstruct mathematical results
 9. The apparatus cannot be its own final authority.
 10. Every run ends in a durable research deliverable.
 
-## Status (v0.1)
+## Status (v0.2)
 
 The governance core is implemented and tested: phase state machine, hash-chained ledger,
 reference quarantine, comparator, metrics, CLI. Mathematical execution, reference ingestion,
@@ -33,11 +33,11 @@ current state, known gaps, and the next steps.
 ## Quick start
 
 ```
-python3 -m pytest -q
+bin/fma preflight
 bin/fma init --run demo --problem fixtures/problems/F-0001.json \
              --reference fixtures/references/F-0001.json --actor intake
 bin/fma status --run demo      # prints the next allowed action
 ```
 
 One command per phase: `init question audit plan attempt verify compare delta intervene
-transfer deliver`, plus `status check runs metrics`. In Claude Code, `/fma-run` drives a whole run.
+transfer deliver`, plus `status check runs metrics calibrate preflight`. The first experiment is specified in `docs/TEST_PLAN.md`. In Claude Code, `/fma-run` drives a whole run.

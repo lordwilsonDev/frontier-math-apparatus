@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-014-coprime",
+  "statement": "How many positive integers n <= 636 satisfy both gcd(n, 66) = 1 and n leaves remainder 0 when divided by 3? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "coprime",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}

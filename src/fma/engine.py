@@ -6,12 +6,17 @@ Phase codes stored in run.json:
   G -> T transfer (only once an intervention exists) -> K deliverable
   G -> K deliverable
 
+Ablation: a run may be initialised with `skip` naming pre-solve stages to leave out
+(question, audit, ail, moie). The skipped stages are recorded as the run's condition so
+runs on the same problem can be compared with and without a stage.
+
 The engine, not the caller, decides the facts that matter for governance:
 whether an attempt was reference-blind, whether a verification was
 independent, whether a comparison was self-certified, and what a transfer
 test showed.
 """
 import json
+import os
 import re
 from pathlib import Path
 
@@ -23,6 +28,9 @@ from .schema import validate
 LOCI = ["interpretation", "assumptions", "strategy", "derivation", "calculation",
         "scope", "tooling", "evidence", "reference_disagreement"]
 AUDIT_KEYS = ["ambiguities", "losses", "transformations", "inventions", "assumptions"]
+STAGES = ["question", "audit", "ail", "moie"]
+ARMS = ["treatment", "control"]
+ENV_KEYS = {"model": str, "knowledge_cutoff": str, "web_access": bool, "code_execution": bool}
 _ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$")
 
 
@@ -61,6 +69,20 @@ class Run:
             raise ProtocolError(
                 f"{action} is not allowed in phase {self.phase}; allowed from: {', '.join(phases)}")
 
+    def _skipped(self, stage: str) -> bool:
+        return stage in self.state.get("condition", {}).get("skip", [])
+
+    def _require_pre(self, action: str, natural: str) -> None:
+        """Allow `action` from its natural phase, or from an earlier one if every stage between is skipped."""
+        order = ["A", "B", "C", "D"]
+        stage_at = {"A": ["question"], "B": ["audit"], "C": ["ail", "moie"]}
+        allowed = [natural]
+        i = order.index(natural) - 1
+        while i >= 0 and all(self._skipped(s) for s in stage_at[order[i]]):
+            allowed.append(order[i])
+            i -= 1
+        self._require(action, *allowed)
+
     def _qv(self) -> int:
         return (self.state.get("question") or {}).get("version", 1)
 
@@ -89,7 +111,8 @@ class Run:
 
     @classmethod
     def init(cls, home, run_id: str, problem: dict, reference: dict, actor: str,
-             parent_run_id: str | None = None, authority: str = "") -> "Run":
+             parent_run_id: str | None = None, authority: str = "",
+             skip=(), arm: str | None = None) -> "Run":
         home = Path(home)
         if not _ID.match(run_id):
             raise ProtocolError("run_id must be alphanumeric with . _ - only")
@@ -102,20 +125,36 @@ class Run:
         validate(problem, "problem.schema.json")
         if not _ID.match(problem["problem_id"]):
             raise ProtocolError("problem_id must be alphanumeric with . _ - only")
+        skip = sorted(set(skip))
+        if any(s not in STAGES for s in skip):
+            raise ProtocolError(f"skip must be drawn from {STAGES}")
+        if bool(parent_run_id) != bool(arm) or (arm and arm not in ARMS):
+            raise ProtocolError("a transfer run needs both --parent and --arm treatment|control")
         if parent_run_id:
             parent = cls(home, parent_run_id)
             if not parent.state.get("interventions"):
                 raise ProtocolError("a transfer run needs a parent run that recorded an intervention")
             for other in list_runs(home):
-                if cls(home, other).state["problem"]["content_hash"] == problem["content_hash"]:
+                o = cls(home, other).state
+                if o["problem"]["content_hash"] != problem["content_hash"]:
+                    continue
+                sibling = o.get("parent_run_id") == parent_run_id and o.get("arm") not in (None, arm)
+                if not sibling:
                     raise ProtocolError(
                         f"transfer problem is not unseen: run {other} already used this statement")
+        if problem.get("source") != "fixture" and os.environ.get("FMA_ALLOW_LOCAL_VAULT") != "1":
+            v, h = vault.vault_dir(home).resolve(), home.resolve()
+            if v == h or h in v.parents:
+                raise ProtocolError(
+                    "real runs need the vault outside the apparatus directory: set FMA_VAULT "
+                    "(only problems with source 'fixture' may use the in-repo vault)")
         commitment = vault.seal(home, problem["problem_id"], reference)
         run_dir.mkdir(parents=True)
         state = {
             "run_id": run_id, "problem": problem, "question": None, "attempts": [],
             "status": "PROPOSED", "phase": "A", "cycle": 1,
             "reference_commitment": commitment, "parent_run_id": parent_run_id,
+            "arm": arm, "condition": {"skip": skip},
         }
         (run_dir / "run.json").write_text(json.dumps(state, indent=2) + "\n")
         run = cls(home, run_id)
@@ -129,6 +168,8 @@ class Run:
 
     def question(self, q: dict, actor: str) -> None:
         self._require("question", "A", "B", "C", "D")
+        if self._skipped("question"):
+            raise ProtocolError("this run's condition skips question engineering")
         q = dict(q)
         q["version"] = self._qv() + 1 if self.state.get("question") else 1
         q.setdefault("question_id", f"{self.run_id}-Q")
@@ -139,7 +180,7 @@ class Run:
         self._commit("QUESTION_CANONICALIZED", actor, "B", q)
 
     def audit(self, a: dict, actor: str) -> None:
-        self._require("audit", "B")
+        self._require_pre("audit", "B")
         record = {}
         for key in AUDIT_KEYS:
             value = a.get(key, [])
@@ -150,17 +191,19 @@ class Run:
         self._commit("REPRESENTATION_AUDITED", actor, "C", record)
 
     def plan(self, p: dict, actor: str) -> None:
-        self._require("plan", "C")
+        self._require_pre("plan", "C")
+        if self._skipped("ail") and self._skipped("moie"):
+            raise ProtocolError("this run's condition skips the planning stage entirely")
         hyps = p.get("hypotheses", [])
         for h in hyps:
             validate(h, "hypothesis.schema.json")
         ids = [h["hypothesis_id"] for h in hyps]
-        if len(set(ids)) < 2:
+        if len(set(ids)) < (1 if self._skipped("moie") else 2):
             raise ProtocolError("MoIE needs at least two competing hypotheses on record")
         if p.get("selected") not in ids:
             raise ProtocolError("plan.selected must name one of the hypotheses")
         inversions = p.get("inversions", [])
-        if not inversions:
+        if not inversions and not self._skipped("ail"):
             raise ProtocolError("AIL must record at least one inverted assumption")
         self.state["hypotheses"] = hyps
         self.state["plan"] = {"selected": p["selected"], "inversions": inversions,
@@ -171,8 +214,25 @@ class Run:
     # ---------------------------------------------------------------- phases E-G
 
     def attempt(self, a: dict, actor: str) -> dict:
-        self._require("attempt", "D", "I")
+        if self.phase != "I":
+            self._require_pre("attempt", "D")
         a = dict(a)
+        env = a.get("environment") or {}
+        for key, typ in ENV_KEYS.items():
+            if not isinstance(env.get(key), typ):
+                raise ProtocolError(
+                    "attempt.environment must record model (str), knowledge_cutoff (str, YYYY-MM), "
+                    "web_access (bool) and code_execution (bool)")
+        risks = []
+        if not self.released:
+            if env["web_access"]:
+                risks.append("solver had web access")
+            public = self.state["problem"].get("reference_public_since")
+            if public and env["knowledge_cutoff"] >= public[:len(env["knowledge_cutoff"])]:
+                risks.append("reference was public before the solver's knowledge cutoff")
+        a["contamination_risk"] = risks
+        if self.state.get("arm"):
+            a["lesson_applied"] = self.state["arm"] == "treatment"
         a["attempt_id"] = f"{self.run_id}-A{len(self.state['attempts']) + 1}"
         a["reference_blind"] = not self.released
         a["actor"] = actor
@@ -268,26 +328,43 @@ class Run:
         self.state["status"] = "RUNNING"
         self._commit("INTERVENTION_APPLIED", actor, "I", i)
 
-    def transfer(self, child_run_id: str, actor: str) -> dict:
-        self._require("transfer", "G")
+    def _arm(self, run_id: str, arm: str) -> "Run":
+        child = Run(self.home, run_id)
+        s = child.state
+        if s.get("parent_run_id") != self.run_id or s.get("arm") != arm:
+            raise ProtocolError(f"{run_id} is not a {arm} arm of this run")
+        if child.integrity():
+            raise ProtocolError(f"{run_id} failed its ledger integrity check")
+        if not s.get("comparisons") or not s["attempts"][0]["reference_blind"]:
+            raise ProtocolError(f"{run_id} needs a blind first attempt that has been compared")
+        return child
+
+    def transfer(self, treatment_run_id: str, control_run_id: str, actor: str) -> dict:
+        """Score the lesson on one unseen problem solved twice: with the lesson and without it."""
+        self._require("transfer", "G", "T")
         if not self.state.get("interventions"):
             raise ProtocolError("nothing to transfer: this run recorded no intervention")
-        child = Run(self.home, child_run_id)
-        if child.state.get("parent_run_id") != self.run_id:
-            raise ProtocolError("transfer run must have been initialised with this run as its parent")
-        if child.integrity():
-            raise ProtocolError("transfer run failed its ledger integrity check")
-        comps = child.state.get("comparisons") or []
-        if not comps or not child.state["attempts"][0]["reference_blind"]:
-            raise ProtocolError("transfer run needs a blind first attempt that has been compared")
-        first = comps[0]["classification"]
-        result = ("TRANSFERRED" if first in MATCHES
-                  else "DID_NOT_TRANSFER" if first in ("MISMATCH", "PARTIAL_MATCH")
-                  else "INCONCLUSIVE")
-        record = {"tested": True, "problem_id": child.state["problem"]["problem_id"],
-                  "run_id": child_run_id, "result": result,
-                  "evidence": f"first comparison of {child_run_id} = {first}; ledger head {child.ledger.head()}"}
+        tr, co = self._arm(treatment_run_id, "treatment"), self._arm(control_run_id, "control")
+        if tr.state["problem"]["content_hash"] != co.state["problem"]["content_hash"]:
+            raise ProtocolError("treatment and control arms must solve the same unseen problem")
+        if any(x.get("run_id") == treatment_run_id for x in self.state.get("transfers", [])):
+            raise ProtocolError("this transfer pair is already recorded")
+        t_cls, c_cls = (r.state["comparisons"][0]["classification"] for r in (tr, co))
+        t_ok, c_ok = t_cls in MATCHES, c_cls in MATCHES
+        if t_ok and not c_ok and c_cls != "UNRESOLVED":
+            result, why = "TRANSFERRED", "solved with the lesson, not solved without it"
+        elif t_ok:
+            result, why = "INCONCLUSIVE", "control arm also solved it or is unresolved; no effect attributable to the lesson"
+        elif t_cls == "UNRESOLVED":
+            result, why = "INCONCLUSIVE", "treatment comparison is unresolved"
+        else:
+            result, why = "DID_NOT_TRANSFER", "not solved even with the lesson"
+        record = {"tested": True, "problem_id": tr.state["problem"]["problem_id"],
+                  "run_id": treatment_run_id, "control_run_id": control_run_id, "result": result,
+                  "evidence": f"treatment={t_cls}, control={c_cls}: {why}; "
+                              f"heads {tr.ledger.head()[:12]}/{co.ledger.head()[:12]}"}
         validate(record, "transfer.schema.json")
+        self.state.setdefault("transfers", []).append(record)
         self.state["transfer"] = record
         self._commit("TRANSFER_TESTED", actor, "T", record, detail={"result": result})
         return record
@@ -313,11 +390,13 @@ class Run:
                 raise ProtocolError(
                     f"{status} needs a matching final comparison that was not self-certified and an "
                     "independent PASS verification of the final attempt; use SUPPORTED, PROPOSED or UNRESOLVED")
-        transfer = self.state.get("transfer")
+        results = [x["result"] for x in self.state.get("transfers", [])]
+        won, lost = results.count("TRANSFERRED"), results.count("DID_NOT_TRANSFER")
         d["lesson_status"] = ("NOT_APPLICABLE" if not self.state.get("interventions")
-                              else "UNTESTED" if not transfer
-                              else {"TRANSFERRED": "ACCEPTED", "DID_NOT_TRANSFER": "REJECTED"}.get(
-                                  transfer["result"], "INCONCLUSIVE"))
+                              else "UNTESTED" if not results
+                              else "ACCEPTED" if won and not lost
+                              else "REJECTED" if lost and not won
+                              else "INCONCLUSIVE")
         self.state["deliverable"] = d
         self.state["status"] = "COMPLETED"
         self._commit("DELIVERABLE_ISSUED", actor, "K", d)
@@ -339,6 +418,7 @@ class Run:
             f"- Lesson ({d.get('lesson_status', '-')}): {d.get('lesson', '-')}",
             f"- Ledger head: `{self.ledger.head()}` ({len(self.ledger.entries())} transitions)\n",
             block("Problem", s["problem"]),
+            block("Condition (skipped stages) and arm", {"condition": s.get("condition"), "arm": s.get("arm")}),
             block("Canonical question", s.get("question")),
             block("Representation audit", s.get("audit")),
             block("Hypotheses (all preserved)", s.get("hypotheses")),
@@ -348,6 +428,6 @@ class Run:
             block("Reference comparisons", s.get("comparisons")),
             block("Delta analysis", s.get("deltas")),
             block("Interventions", s.get("interventions")),
-            block("Transfer", s.get("transfer")),
+            block("Transfer pairs (treatment vs control)", s.get("transfers")),
         ]
         return "\n".join(parts)

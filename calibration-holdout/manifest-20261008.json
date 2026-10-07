@@ -1,0 +1,142 @@
+[
+  {
+    "problem_id": "CAL-20261008-001-incl_excl",
+    "family": "incl_excl",
+    "level": 1,
+    "statement_hash": "c3ada0a6002612365013ccaae70424d2ae6ae4dd7866f57873c81e21975dbf15",
+    "reference_commitment": "e307e09a50b00d7e66218b94703ae27184b5bbcdb8d6548670844cd4d83ca4bc"
+  },
+  {
+    "problem_id": "CAL-20261008-002-modpow",
+    "family": "modpow",
+    "level": 1,
+    "statement_hash": "015dced982709639fa14d069b9d2f7e6060cdbc9e795c32aa43db64887adf38a",
+    "reference_commitment": "823a9a87085ec3a8ff08369bdd2130e97aa5e8dc477cc55e646f82a2477ff69f"
+  },
+  {
+    "problem_id": "CAL-20261008-003-lattice",
+    "family": "lattice",
+    "level": 1,
+    "statement_hash": "27d48796e85ab6e25b49097f01811c4ef08fb9bacc6b37ee6d9e4d390bd242ab",
+    "reference_commitment": "8d381f0faf75232ede1f6244e98c924a05cacb79ca3fcbe3b34b4f9d4c31ef0e"
+  },
+  {
+    "problem_id": "CAL-20261008-004-coprime",
+    "family": "coprime",
+    "level": 1,
+    "statement_hash": "848a5b53752d5b036cce3f1533c7b524d0544de48826cf3471709d3d5a6aeca6",
+    "reference_commitment": "89c320500c8478d682ab4e818da3ebd8e1cf3a89c38ba87edb7555ea3aefee1d"
+  },
+  {
+    "problem_id": "CAL-20261008-005-digits",
+    "family": "digits",
+    "level": 1,
+    "statement_hash": "d6cef763bf551522fc1d5cb5158cbe9503287a723ade11ab7cad706ca60dd650",
+    "reference_commitment": "024bd01546eaf83cc18fa3154256aecc25e868155084986611338c70e0cfbd71"
+  },
+  {
+    "problem_id": "CAL-20261008-006-incl_excl",
+    "family": "incl_excl",
+    "level": 2,
+    "statement_hash": "1e433c92331bb5cad00deee844640000938059b9d44d61ec30fa7e19f228c952",
+    "reference_commitment": "ca9e67743614dd35527a157ebfad9563608580a900ea7494c18488ab66b9d303"
+  },
+  {
+    "problem_id": "CAL-20261008-007-modpow",
+    "family": "modpow",
+    "level": 2,
+    "statement_hash": "d718e98090726d90d73ed27970009e5b2e45ff09eb26ba93ea9cd0c3fe7da9b0",
+    "reference_commitment": "f38d35cdd80e7b749da3e21ae37b433db312373dca23f45c66963373fa01a79b"
+  },
+  {
+    "problem_id": "CAL-20261008-008-lattice",
+    "family": "lattice",
+    "level": 2,
+    "statement_hash": "6d568582d11822eb7c865be90b5e43953217ad4376dc93e35d234d7094ed79e9",
+    "reference_commitment": "6fc4b1645fc2424df437d9c41fc149b32824e4784fab949073b8977a45de5441"
+  },
+  {
+    "problem_id": "CAL-20261008-009-coprime",
+    "family": "coprime",
+    "level": 2,
+    "statement_hash": "bdafa2a3dee7809ea05c0f4a5359801dc64ad01b9f560192729996dd1e70476d",
+    "reference_commitment": "8b688c4b183a35f5d9a0b48254b6a5e241a0228c464a18582242c9d4b5f9dd31"
+  },
+  {
+    "problem_id": "CAL-20261008-010-digits",
+    "family": "digits",
+    "level": 2,
+    "statement_hash": "24fccc681b9851b8f9877e251a8c5184c65fcd3a3f9d0d8b33fc2f121a068feb",
+    "reference_commitment": "0a36b388783613514ad90909a72cdfdd80629961d0eaa9b469b5649fddcb0d7c"
+  },
+  {
+    "problem_id": "CAL-20261008-011-incl_excl",
+    "family": "incl_excl",
+    "level": 3,
+    "statement_hash": "575d26f3d29474939aaf797f1bf9bc7865fe00c583d74376a5e1822e2f3af943",
+    "reference_commitment": "76f24d15334792764ebb7acbabd4fbf0cc9bb19d423493314c327664e6f23232"
+  },
+  {
+    "problem_id": "CAL-20261008-012-modpow",
+    "family": "modpow",
+    "level": 3,
+    "statement_hash": "6ffb39c3326720cdb9cb7124646abe2d3832fdc8b39949faa3fe8554285e4e0b",
+    "reference_commitment": "14ee4d12679d4dffcb41765cdd3b387a7da760857eb75d473100daabd0f59c37"
+  },
+  {
+    "problem_id": "CAL-20261008-013-lattice",
+    "family": "lattice",
+    "level": 3,
+    "statement_hash": "80e333f8d729862e09e7893192d747e824eda809c36bfdffc1005d3f3cc788f5",
+    "reference_commitment": "e0b2c43e89f556c8f0dab103b0a75050720ec9fc424c2b4d29cf0468527ad6e8"
+  },
+  {
+    "problem_id": "CAL-20261008-014-coprime",
+    "family": "coprime",
+    "level": 3,
+    "statement_hash": "743d1579fb69d53b42288e00a829dfa935695713b3720bd28a5376688d67ceb1",
+    "reference_commitment": "0fd3d3c62ebf43de736db7b2fad7d8435aeed3a15675e1c31954dddc22a6c37a"
+  },
+  {
+    "problem_id": "CAL-20261008-015-digits",
+    "family": "digits",
+    "level": 3,
+    "statement_hash": "7f9443b502e9ae28d03381071e38df1dde3790466328de007ec28c453991c832",
+    "reference_commitment": "78540b5a927bdf72527c07c0e622c1fdc25ae859a98ac0760a256fe4b8c66ce6"
+  },
+  {
+    "problem_id": "CAL-20261008-016-incl_excl",
+    "family": "incl_excl",
+    "level": 1,
+    "statement_hash": "2c48730ca2b89b3f75568941bd8d3252c66fc46adafc853fb727f9aa3ec10f5d",
+    "reference_commitment": "bc5ad8fed3ca1f2ea7ddea373319287be893923355c9cb57f0c15d63b267aef5"
+  },
+  {
+    "problem_id": "CAL-20261008-017-modpow",
+    "family": "modpow",
+    "level": 1,
+    "statement_hash": "392cbd0af0749ec83ae1a2e26247757ea81e58dec37ac6329a980b05ce4c612d",
+    "reference_commitment": "823a9a87085ec3a8ff08369bdd2130e97aa5e8dc477cc55e646f82a2477ff69f"
+  },
+  {
+    "problem_id": "CAL-20261008-018-lattice",
+    "family": "lattice",
+    "level": 1,
+    "statement_hash": "eb6b38598389a3eae8224080eeeda9d053a5ba7906b6c71d78fc6040127298d3",
+    "reference_commitment": "551107d7c124446a3664714bcfd5302cc14a111077b3753ae1d7677a3c3a8d71"
+  },
+  {
+    "problem_id": "CAL-20261008-019-coprime",
+    "family": "coprime",
+    "level": 1,
+    "statement_hash": "88eb1223bb9c5384d4fb1d99025c9557bb217a6b9ade31763f1b7c0d1e0f3e89",
+    "reference_commitment": "dc1c76a4096bf704e7f08b4c1ee0406c3bf48aa21ada9a89983d73ddd9d75aad"
+  },
+  {
+    "problem_id": "CAL-20261008-020-digits",
+    "family": "digits",
+    "level": 1,
+    "statement_hash": "b6c21edf9348ca6fbfab5ea4d4c4cea2b76c092a55e1500bd6c748098605f93f",
+    "reference_commitment": "099075f2fc06834828b42358fe3da8c0cd33ed0497ee4314819dad563becc0cb"
+  }
+]

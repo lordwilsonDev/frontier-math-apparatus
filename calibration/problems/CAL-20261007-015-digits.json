@@ -1,0 +1,9 @@
+{
+  "problem_id": "CAL-20261007-015-digits",
+  "statement": "How many integers from 1 to 77100 inclusive have a digit sum divisible by 4? Give the answer as a single integer.",
+  "source": "calibration",
+  "family": "digits",
+  "terrain": "T-calibration",
+  "difficulty": "L2",
+  "blind_reference": true
+}
